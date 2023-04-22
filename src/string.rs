@@ -1,3 +1,6 @@
+use std::ops::Deref;
+use std::str;
+
 use crate::vec::Vec;
 
 #[repr(C)]
@@ -10,5 +13,13 @@ impl From<std::string::String> for String {
         String {
             vec: Vec::from(value.into_bytes()),
         }
+    }
+}
+
+impl Deref for String {
+    type Target = str;
+    #[inline]
+    fn deref(&self) -> &str {
+        unsafe { str::from_utf8_unchecked(&self.vec) }
     }
 }
