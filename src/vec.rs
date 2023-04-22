@@ -392,3 +392,13 @@ impl<T> From<std::vec::Vec<T>> for Vec<T> {
         }
     }
 }
+
+impl<T> Into<std::vec::Vec<T>> for Vec<T> {
+    #[inline]
+    fn into(self: Vec<T>) -> std::vec::Vec<T> {
+        unsafe {
+            // Safety: pointers originate from `Vec`.
+            std::vec::Vec::from_raw_parts(self.buf.ptr.as_ptr(), self.len, self.buf.cap)
+        }
+    }
+}
