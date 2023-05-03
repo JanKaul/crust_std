@@ -1122,3 +1122,13 @@ where
         }
     }
 }
+
+#[no_mangle]
+pub unsafe extern "C" fn option_has_value<T>(option: *const Option<T>) -> bool {
+    option.as_ref().is_some()
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn option_value<T>(option: *const Option<T>) -> *const T {
+    (*option).as_ref().unwrap()
+}

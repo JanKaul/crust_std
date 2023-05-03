@@ -27,3 +27,18 @@ impl Deref for String {
         unsafe { str::from_utf8_unchecked(&self.0) }
     }
 }
+
+#[no_mangle]
+pub unsafe extern "C" fn string_len(string: *const String) -> usize {
+    (&*string).0.len()
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn string_at(string: *const String, i: usize) -> *const u8 {
+    &(&*string).0[i]
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn string_data(string: *const String) -> *const u8 {
+    (*string).0.as_ref().as_ptr()
+}

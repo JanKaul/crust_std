@@ -353,3 +353,18 @@ impl<T> Into<std::vec::Vec<T>> for Vec<T> {
         }
     }
 }
+
+#[no_mangle]
+pub unsafe extern "C" fn vec_len<T>(vec: *const Vec<T>) -> usize {
+    (&*vec).len()
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn vec_at<T>(vec: *const Vec<T>, i: usize) -> *const T {
+    &(&*vec)[i]
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn vec_data<T>(vec: *const Vec<T>) -> *const T {
+    (*vec).as_ref().as_ptr()
+}

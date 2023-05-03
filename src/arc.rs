@@ -80,3 +80,16 @@ impl<T> Drop for Arc<T> {
         }
     }
 }
+
+#[no_mangle]
+pub unsafe extern "C" fn arc_get<T>(arc: *const Arc<T>) -> *const T {
+    (&*arc).deref()
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn arc_clone<T>(arc: *const Arc<T>) -> Arc<T> {
+    (&*arc).clone()
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn arc_free<T>(arc: Arc<T>) {}
