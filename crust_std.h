@@ -1,10 +1,13 @@
+typedef void Void;
+template<typename T>
+using Opaque=void;
+typedef uintptr_t AtomicUsize;
+
 #include <cstdarg>
 #include <cstdint>
 #include <cstdlib>
 #include <ostream>
 #include <new>
-
-namespace crust_std {
 
 template<typename T>
 struct ArcInner {
@@ -18,21 +21,7 @@ struct Arc {
 };
 
 template<typename T>
-struct Option {
-  enum class Tag : uint8_t {
-    None,
-    Some,
-  };
-
-  struct Some_Body {
-    T _0;
-  };
-
-  Tag tag;
-  union {
-    Some_Body some;
-  };
-};
+using Opaque = Arc<T>;
 
 template<typename T>
 struct RawVec {
@@ -52,28 +41,30 @@ struct String {
 
 extern "C" {
 
-const T *arc_get(const Arc<T> *arc);
+const Void *crust_arc_get(const Opaque<Void> *arc);
 
-Arc<T> arc_clone(const Arc<T> *arc);
+Arc<Void> crust_arc_clone(const Opaque<Void> *arc);
 
-void arc_free(Arc<T> arc);
+void crust_arc_free(Opaque<Void> *arc);
 
-bool option_has_value(const Option<T> *option);
+bool crust_option_has_value(const Opaque<Void> *option);
 
-const T *option_value(const Option<T> *option);
+const Void *crust_option_value(const Opaque<Void> *option);
 
-uintptr_t string_len(const String *string);
+uintptr_t crust_string_len(const String *string);
 
-const uint8_t *string_at(const String *string, uintptr_t i);
+const uint8_t *crust_string_at(const String *string, uintptr_t i);
 
-const uint8_t *string_data(const String *string);
+const uint8_t *crust_string_data(const String *string);
 
-uintptr_t vec_len(const Vec<T> *vec);
+void crust_string_free(String *string);
 
-const T *vec_at(const Vec<T> *vec, uintptr_t i);
+uintptr_t crust_vec_len(const Opaque<Void> *vec);
 
-const T *vec_data(const Vec<T> *vec);
+const Void *crust_vec_at(const Opaque<Void> *vec, uintptr_t i);
+
+const Void *crust_vec_data(const Opaque<Void> *vec);
+
+void crust_vec_free(Opaque<Void> *vec);
 
 } // extern "C"
-
-} // namespace crust_std

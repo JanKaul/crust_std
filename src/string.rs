@@ -1,4 +1,5 @@
 use std::ops::Deref;
+use std::ptr::drop_in_place;
 use std::str;
 
 use crate::vec::Vec;
@@ -29,16 +30,21 @@ impl Deref for String {
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn string_len(string: *const String) -> usize {
+pub unsafe extern "C" fn crust_string_len(string: *const String) -> usize {
     (&*string).0.len()
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn string_at(string: *const String, i: usize) -> *const u8 {
+pub unsafe extern "C" fn crust_string_at(string: *const String, i: usize) -> *const u8 {
     &(&*string).0[i]
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn string_data(string: *const String) -> *const u8 {
+pub unsafe extern "C" fn crust_string_data(string: *const String) -> *const u8 {
     (*string).0.as_ref().as_ptr()
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn crust_string_free(string: *mut String) {
+    drop_in_place(string)
 }

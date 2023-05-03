@@ -2,7 +2,7 @@ use std::alloc::{self, Layout};
 use std::marker::PhantomData;
 use std::mem;
 use std::ops::{Deref, DerefMut};
-use std::ptr;
+use std::ptr::{self, drop_in_place};
 
 use crate::nonnull::NonNull;
 
@@ -16,7 +16,7 @@ unsafe impl<T: Send> Send for RawVec<T> {}
 unsafe impl<T: Sync> Sync for RawVec<T> {}
 
 impl<T> RawVec<T> {
-    fn new() -> Self {
+    pub fn new() -> Self {
         // !0 is usize::MAX. This branch should be stripped at compile time.
         let cap = if mem::size_of::<T>() == 0 { !0 } else { 0 };
 
@@ -354,17 +354,24 @@ impl<T> Into<std::vec::Vec<T>> for Vec<T> {
     }
 }
 
+type Opaque<T> = Vec<T>;
+
 #[no_mangle]
-pub unsafe extern "C" fn vec_len<T>(vec: *const Vec<T>) -> usize {
+pub unsafe extern "C" fn crust_vec_len<Void>(vec: *const Opaque<Void>) -> usize {
     (&*vec).len()
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn vec_at<T>(vec: *const Vec<T>, i: usize) -> *const T {
+pub unsafe extern "C" fn crust_vec_at<Void>(vec: *const Opaque<Void>, i: usize) -> *const Void {
     &(&*vec)[i]
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn vec_data<T>(vec: *const Vec<T>) -> *const T {
+pub unsafe extern "C" fn crust_vec_data<Void>(vec: *const Opaque<Void>) -> *const Void {
     (*vec).as_ref().as_ptr()
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn crust_vec_free<Void>(vec: *mut Opaque<Void>) {
+    drop_in_place(vec);
 }

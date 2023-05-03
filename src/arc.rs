@@ -1,5 +1,6 @@
 use std::marker::PhantomData;
 use std::ops::Deref;
+use std::ptr::drop_in_place;
 use std::sync::atomic::{self, AtomicUsize, Ordering};
 
 use crate::nonnull::NonNull;
@@ -81,15 +82,19 @@ impl<T> Drop for Arc<T> {
     }
 }
 
+type Opaque<T> = Arc<T>;
+
 #[no_mangle]
-pub unsafe extern "C" fn arc_get<T>(arc: *const Arc<T>) -> *const T {
+pub unsafe extern "C" fn crust_arc_get<Void>(arc: *const Opaque<Void>) -> *const Void {
     (&*arc).deref()
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn arc_clone<T>(arc: *const Arc<T>) -> Arc<T> {
+pub unsafe extern "C" fn crust_arc_clone<Void>(arc: *const Opaque<Void>) -> Arc<Void> {
     (&*arc).clone()
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn arc_free<T>(arc: Arc<T>) {}
+pub unsafe extern "C" fn crust_arc_free<Void>(arc: *mut Opaque<Void>) {
+    drop_in_place(arc);
+}

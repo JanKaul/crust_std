@@ -4,6 +4,7 @@ use std::{
     pin::Pin,
 };
 
+/// cbindgen:derive-tagged-enum-destructor
 #[repr(C, u8)]
 pub enum Option<T> {
     None,
@@ -1123,12 +1124,14 @@ where
     }
 }
 
+type Opaque<T> = Option<T>;
+
 #[no_mangle]
-pub unsafe extern "C" fn option_has_value<T>(option: *const Option<T>) -> bool {
+pub unsafe extern "C" fn crust_option_has_value<Void>(option: *const Opaque<Void>) -> bool {
     option.as_ref().is_some()
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn option_value<T>(option: *const Option<T>) -> *const T {
+pub unsafe extern "C" fn crust_option_value<Void>(option: *const Opaque<Void>) -> *const Void {
     (*option).as_ref().unwrap()
 }
