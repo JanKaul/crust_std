@@ -7,3 +7,6 @@ edition = "2021"
 
 [dependencies]
 sptr = "0.3.2"
+
+[build-dependencies]
+cbindgen = "0.24.0"
