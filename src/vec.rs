@@ -356,21 +356,25 @@ impl<T> Into<std::vec::Vec<T>> for Vec<T> {
 
 type Opaque<T> = Vec<T>;
 
+#[allow(no_mangle_generic_items)]
 #[no_mangle]
 pub unsafe extern "C" fn crust_vec_len<Void>(vec: *const Opaque<Void>) -> usize {
     (&*vec).len()
 }
 
+#[allow(no_mangle_generic_items)]
 #[no_mangle]
 pub unsafe extern "C" fn crust_vec_at<Void>(vec: *const Opaque<Void>, i: usize) -> *const Void {
     &(&*vec)[i]
 }
 
+#[allow(no_mangle_generic_items)]
 #[no_mangle]
 pub unsafe extern "C" fn crust_vec_data<Void>(vec: *const Opaque<Void>) -> *const Void {
     (*vec).as_ref().as_ptr()
 }
 
+#[allow(no_mangle_generic_items)]
 #[no_mangle]
 pub unsafe extern "C" fn crust_vec_free<Void>(vec: *mut Opaque<Void>) {
     drop_in_place(vec);

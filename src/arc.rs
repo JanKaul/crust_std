@@ -84,16 +84,19 @@ impl<T> Drop for Arc<T> {
 
 type Opaque<T> = Arc<T>;
 
+#[allow(no_mangle_generic_items)]
 #[no_mangle]
 pub unsafe extern "C" fn crust_arc_get<Void>(arc: *const Opaque<Void>) -> *const Void {
     (&*arc).deref()
 }
 
+#[allow(no_mangle_generic_items)]
 #[no_mangle]
 pub unsafe extern "C" fn crust_arc_clone<Void>(arc: *const Opaque<Void>) -> Arc<Void> {
     (&*arc).clone()
 }
 
+#[allow(no_mangle_generic_items)]
 #[no_mangle]
 pub unsafe extern "C" fn crust_arc_free<Void>(arc: *mut Opaque<Void>) {
     drop_in_place(arc);
