@@ -21,9 +21,6 @@ struct Arc {
 };
 
 template<typename T>
-using Opaque = Arc<T>;
-
-template<typename T>
 struct RawVec {
   T *ptr;
   uintptr_t cap;

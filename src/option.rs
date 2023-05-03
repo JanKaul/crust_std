@@ -1124,6 +1124,7 @@ where
     }
 }
 
+/// cbindgen:ignore
 type Opaque<T> = Option<T>;
 
 #[allow(no_mangle_generic_items)]

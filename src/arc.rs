@@ -82,6 +82,7 @@ impl<T> Drop for Arc<T> {
     }
 }
 
+/// cbindgen:ignore
 type Opaque<T> = Arc<T>;
 
 #[allow(no_mangle_generic_items)]

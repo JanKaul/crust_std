@@ -354,6 +354,7 @@ impl<T> Into<std::vec::Vec<T>> for Vec<T> {
     }
 }
 
+/// cbindgen:ignore
 type Opaque<T> = Vec<T>;
 
 #[allow(no_mangle_generic_items)]
