@@ -1,38 +1,85 @@
-typedef void Void;
-template<typename T>
-using Opaque=void;
-typedef uintptr_t AtomicUsize;
+#pragma once
 
 #include <cstdarg>
+#include <cstddef>
 #include <cstdint>
 #include <cstdlib>
 #include <ostream>
 #include <new>
+#include <span>
+
+
+namespace iceberg {
 
 template<typename T>
-struct RawVec {
+struct Option {
+  enum class Tag : uint8_t {
+    None,
+    Some,
+  };
+
+  struct Some_Body {
+    T _0;
+  };
+
+  Tag tag;
+  union {
+    Some_Body some;
+  };
+
+  ~Option() {
+    switch (tag) {
+      case Tag::Some: some.~Some_Body(); break;
+      default: break;
+    }
+  }
+
+  Option(const Option& other)
+   : tag(other.tag) {
+    switch (tag) {
+      case Tag::Some: ::new (&some) (Some_Body)(other.some); break;
+      default: break;
+    }
+  }
+};
+
+/// A struct that basically replaces a `Box<[T]>`, but which cbindgen can
+/// understand.
+///
+/// We could rely on the struct layout of `Box<[T]>` per:
+///
+///   https://github.com/rust-lang/unsafe-code-guidelines/blob/master/reference/src/layout/pointers.md
+///
+/// But handling fat pointers with cbindgen both in structs and argument
+/// positions more generally is a bit tricky.
+///
+template<typename T>
+struct OwnedSlice {
   T *ptr;
-  uintptr_t cap;
+  size_t len;
+  std::span<T> AsSpan() {
+    return { ptr, len };
+  }
+
+  inline std::span<const T> AsSpan() const {
+    return { ptr, len };
+  }
+  
+  ~OwnedSlice() {
+    if (!len)
+      return;
+    for (auto& val : AsSpan())
+      val.~T();
+    free(ptr);
+    ptr = (T*)alignof(T);
+    len = 0; 
+  }
 };
 
-template<typename T>
-struct Vec {
-  RawVec<T> buf;
-  uintptr_t len;
+/// A struct that basically replaces a Box<str>, but with a defined layout,
+/// suitable for FFI.
+struct OwnedStr {
+  OwnedSlice<uint8_t> _0;
 };
 
-struct String {
-  Vec<uint8_t> _0;
-};
-
-extern "C" {
-
-uintptr_t crust_string_len(const String *string);
-
-const uint8_t *crust_string_at(const String *string, uintptr_t i);
-
-const uint8_t *crust_string_data(const String *string);
-
-void crust_free_vec_u8(Vec<uint8_t> *vec);
-
-} // extern "C"
+} // namespace iceberg

@@ -4,7 +4,6 @@ use std::{
     pin::Pin,
 };
 
-/// cbindgen:derive-tagged-enum-destructor
 #[repr(C, u8)]
 pub enum Option<T> {
     None,

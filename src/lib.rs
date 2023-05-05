@@ -1,4 +1,3 @@
-mod nonnull;
 pub mod option;
-pub mod string;
-pub mod vec;
+pub mod owned_slice;
+pub mod owned_str;
