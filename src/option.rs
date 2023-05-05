@@ -1123,18 +1123,3 @@ where
         }
     }
 }
-
-/// cbindgen:ignore
-type Opaque<T> = Option<T>;
-
-#[allow(no_mangle_generic_items)]
-#[no_mangle]
-pub unsafe extern "C" fn crust_option_has_value<Void>(option: *const Opaque<Void>) -> bool {
-    option.as_ref().is_some()
-}
-
-#[allow(no_mangle_generic_items)]
-#[no_mangle]
-pub unsafe extern "C" fn crust_option_value<Void>(option: *const Opaque<Void>) -> *const Void {
-    (*option).as_ref().unwrap()
-}

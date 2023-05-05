@@ -2,7 +2,7 @@ use std::alloc::{self, Layout};
 use std::marker::PhantomData;
 use std::mem;
 use std::ops::{Deref, DerefMut};
-use std::ptr::{self, drop_in_place};
+use std::ptr;
 
 use crate::nonnull::NonNull;
 
@@ -352,31 +352,4 @@ impl<T> Into<std::vec::Vec<T>> for Vec<T> {
             std::vec::Vec::from_raw_parts(self.buf.ptr.as_ptr(), self.len, self.buf.cap)
         }
     }
-}
-
-/// cbindgen:ignore
-type Opaque<T> = Vec<T>;
-
-#[allow(no_mangle_generic_items)]
-#[no_mangle]
-pub unsafe extern "C" fn crust_vec_len<Void>(vec: *const Opaque<Void>) -> usize {
-    (&*vec).len()
-}
-
-#[allow(no_mangle_generic_items)]
-#[no_mangle]
-pub unsafe extern "C" fn crust_vec_at<Void>(vec: *const Opaque<Void>, i: usize) -> *const Void {
-    &(&*vec)[i]
-}
-
-#[allow(no_mangle_generic_items)]
-#[no_mangle]
-pub unsafe extern "C" fn crust_vec_data<Void>(vec: *const Opaque<Void>) -> *const Void {
-    (*vec).as_ref().as_ptr()
-}
-
-#[allow(no_mangle_generic_items)]
-#[no_mangle]
-pub unsafe extern "C" fn crust_vec_free<Void>(vec: *mut Opaque<Void>) {
-    drop_in_place(vec);
 }

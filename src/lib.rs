@@ -1,5 +1,4 @@
-pub mod arc;
-pub mod nonnull;
+mod nonnull;
 pub mod option;
 pub mod string;
 pub mod vec;

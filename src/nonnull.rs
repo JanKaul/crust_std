@@ -41,6 +41,7 @@ impl<T> NonNull<T> {
         self.pointer as *mut T
     }
 
+    #[allow(dead_code)]
     #[must_use]
     #[inline(always)]
     pub unsafe fn as_ref<'a>(&self) -> &'a T {
