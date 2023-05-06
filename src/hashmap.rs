@@ -28,7 +28,7 @@ fn hash<K: Hash>(s: &K) -> u64 {
 
 #[no_mangle]
 pub extern "C" fn crust_hash_owned_str(s: &OwnedStr) -> u64 {
-    hash(&s.as_bytes())
+    hash(s)
 }
 
 impl<K: Clone + Hash + Eq, V: Clone> HashMap<K, V> {
