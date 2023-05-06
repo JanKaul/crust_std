@@ -93,11 +93,12 @@ impl<K: Clone + Hash + Eq, V: Clone> HashMap<K, V> {
         let new_data = OwnedSlice::from(vec![Option::None; self.capacity]);
         let old_data = mem::replace(&mut self.data, new_data);
         self.n_items = 0;
-        for entry in old_data.into_iter().filter(|x| x.is_some()) {
-            if let Option::Some(keyvalue) = entry {
-                self.insert(&keyvalue.key, keyvalue.value)
-                    .expect("Capacity should be enough.")
-            }
+        for entry in old_data
+            .into_iter()
+            .filter_map(|x| Into::<std::option::Option<KeyValue<K, V>>>::into(x))
+        {
+            self.insert(&entry.key, entry.value)
+                .expect("Capacity should be enough.")
         }
     }
 }
