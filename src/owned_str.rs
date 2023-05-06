@@ -8,6 +8,7 @@
 
 use crate::owned_slice::OwnedSlice;
 use std::fmt;
+use std::hash::Hash;
 use std::ops::{Deref, DerefMut};
 
 /// A struct that basically replaces a Box<str>, but with a defined layout,
@@ -77,5 +78,11 @@ impl From<String> for OwnedStr {
     #[inline]
     fn from(s: String) -> Self {
         OwnedStr(s.into_bytes().into())
+    }
+}
+
+impl Hash for OwnedStr {
+    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
+        self.as_bytes().hash(state)
     }
 }
