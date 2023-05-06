@@ -11,38 +11,6 @@
 
 namespace iceberg {
 
-template<typename T>
-struct Option {
-  enum class Tag : uint8_t {
-    None,
-    Some,
-  };
-
-  struct Some_Body {
-    T _0;
-  };
-
-  Tag tag;
-  union {
-    Some_Body some;
-  };
-
-  ~Option() {
-    switch (tag) {
-      case Tag::Some: some.~Some_Body(); break;
-      default: break;
-    }
-  }
-
-  Option(const Option& other)
-   : tag(other.tag) {
-    switch (tag) {
-      case Tag::Some: ::new (&some) (Some_Body)(other.some); break;
-      default: break;
-    }
-  }
-};
-
 /// A struct that basically replaces a `Box<[T]>`, but which cbindgen can
 /// understand.
 ///
@@ -81,5 +49,44 @@ struct OwnedSlice {
 struct OwnedStr {
   OwnedSlice<uint8_t> _0;
 };
+
+template<typename T>
+struct Option {
+  enum class Tag : uint8_t {
+    None,
+    Some,
+  };
+
+  struct Some_Body {
+    T _0;
+  };
+
+  Tag tag;
+  union {
+    Some_Body some;
+  };
+
+  ~Option() {
+    switch (tag) {
+      case Tag::Some: some.~Some_Body(); break;
+      default: break;
+    }
+  }
+
+  Option(const Option& other)
+   : tag(other.tag) {
+    switch (tag) {
+      case Tag::Some: ::new (&some) (Some_Body)(other.some); break;
+      default: break;
+    }
+  }
+};
+
+
+extern "C" {
+
+uint64_t crust_hash_owned_str(const OwnedStr *s);
+
+} // extern "C"
 
 } // namespace iceberg
