@@ -7,7 +7,7 @@ edition = "2021"
 
 [dependencies]
 anyhow = "1.0.71"
-serde = "1.0.162"
+serde = { version = "1.0.162", features = ["derive"] }
 sptr = "0.3.2"
 
 [build-dependencies]

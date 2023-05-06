@@ -4,6 +4,9 @@ use std::{
     pin::Pin,
 };
 
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[repr(C, u8)]
 pub enum Option<T> {
     None,

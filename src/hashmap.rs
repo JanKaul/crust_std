@@ -8,7 +8,7 @@ use std::{fmt, mem};
 
 use crate::{option::Option, owned_slice::OwnedSlice, owned_str::OwnedStr};
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 #[repr(C)]
 pub struct KeyValue<K, V> {
     key: K,
