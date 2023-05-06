@@ -34,6 +34,10 @@ pub extern "C" fn crust_hash_owned_str(s: &OwnedStr) -> u64 {
 impl<K: Clone + Hash + Eq, V: Clone> HashMap<K, V> {
     pub fn new() -> Self {
         let capacity = 64;
+        Self::new_with_capacity(capacity)
+    }
+
+    pub fn new_with_capacity(capacity: usize) -> Self {
         let data = OwnedSlice::from(vec![Option::None; capacity]);
         HashMap {
             data,
