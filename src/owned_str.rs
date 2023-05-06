@@ -6,6 +6,8 @@
 
 //! A replacement for `Box<str>` that has a defined layout for FFI.
 
+use serde::{Deserialize, Serialize};
+
 use crate::owned_slice::OwnedSlice;
 use std::fmt;
 use std::hash::Hash;
@@ -14,7 +16,7 @@ use std::ops::{Deref, DerefMut};
 /// A struct that basically replaces a Box<str>, but with a defined layout,
 /// suitable for FFI.
 #[repr(C)]
-#[derive(Clone, Default, Eq, PartialEq)]
+#[derive(Clone, Default, Eq, PartialEq, Serialize, Deserialize)]
 pub struct OwnedStr(OwnedSlice<u8>);
 
 impl fmt::Debug for OwnedStr {
