@@ -8,13 +8,14 @@ use std::{fmt, mem};
 
 use crate::{option::Option, owned_slice::OwnedSlice, owned_str::OwnedStr};
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 #[repr(C)]
 pub struct KeyValue<K, V> {
     key: K,
     value: V,
 }
 
+#[derive(Clone, Debug, PartialEq, Eq)]
 #[repr(C)]
 pub struct HashMap<K, V> {
     data: OwnedSlice<Option<KeyValue<K, V>>>,
