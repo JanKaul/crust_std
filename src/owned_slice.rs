@@ -169,3 +169,23 @@ impl<'de, T: Deserialize<'de>> Deserialize<'de> for OwnedSlice<T> {
         Ok(r.into())
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn owned_slice() {
+        let record = r#"
+        [1,2,3,4,5]
+        "#;
+
+        let result: OwnedSlice<i32> = serde_json::from_str(record).unwrap();
+        assert_eq!(3, result[2]);
+        let result_two: OwnedSlice<i32> = serde_json::from_str(
+            &serde_json::to_string(&result).expect("Failed to serialize result"),
+        )
+        .expect("Failed to serialize json");
+        assert_eq!(result, result_two);
+    }
+}

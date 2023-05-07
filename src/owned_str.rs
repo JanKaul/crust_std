@@ -6,7 +6,7 @@
 
 //! A replacement for `Box<str>` that has a defined layout for FFI.
 
-use serde::{Deserialize, Serialize};
+use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
 use crate::owned_slice::OwnedSlice;
 use std::fmt;
@@ -16,7 +16,7 @@ use std::ops::{Deref, DerefMut};
 /// A struct that basically replaces a Box<str>, but with a defined layout,
 /// suitable for FFI.
 #[repr(C)]
-#[derive(Clone, Default, Eq, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Default, Eq, PartialEq)]
 pub struct OwnedStr(OwnedSlice<u8>);
 
 impl fmt::Debug for OwnedStr {
@@ -86,5 +86,44 @@ impl From<String> for OwnedStr {
 impl Hash for OwnedStr {
     fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
         self.as_bytes().hash(state)
+    }
+}
+
+impl Serialize for OwnedStr {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        self.deref().serialize(serializer)
+    }
+}
+
+impl<'de> Deserialize<'de> for OwnedStr {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let r = String::deserialize(deserializer)?;
+        Ok(r.into())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn owned_str() {
+        let record = r#"
+        "hello world"
+        "#;
+
+        let result: OwnedStr = serde_json::from_str(record).unwrap();
+        assert_eq!("hello world", result.deref());
+        let result_two: OwnedStr = serde_json::from_str(
+            &serde_json::to_string(&result).expect("Failed to serialize result"),
+        )
+        .expect("Failed to serialize json");
+        assert_eq!(result, result_two);
     }
 }

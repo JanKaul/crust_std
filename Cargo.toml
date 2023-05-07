@@ -12,3 +12,6 @@ sptr = "0.3.2"
 
 [build-dependencies]
 cbindgen = "0.24.0"
+
+[dev-dependencies]
+serde_json = "1.0.96"
