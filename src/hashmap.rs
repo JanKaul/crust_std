@@ -85,7 +85,7 @@ impl<K: Clone + Hash + Eq, V: Clone> HashMap<K, V> {
         result.map(|x| x.value).into()
     }
 
-    pub fn get<Q>(&mut self, key: &Q) -> std::option::Option<&V>
+    pub fn get<Q>(&self, key: &Q) -> std::option::Option<&V>
     where
         K: Borrow<Q>,
         Q: Hash + Eq,
