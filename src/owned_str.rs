@@ -15,9 +15,9 @@ use std::ops::{Deref, DerefMut};
 
 /// A struct that basically replaces a Box<str>, but with a defined layout,
 /// suitable for FFI.
-#[repr(C)]
+#[repr(transparent)]
 #[derive(Clone, Default, Eq, PartialEq)]
-pub struct OwnedStr(OwnedSlice<u8>);
+pub struct OwnedStr(pub OwnedSlice<u8>);
 
 impl fmt::Debug for OwnedStr {
     fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {

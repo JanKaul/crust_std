@@ -46,9 +46,7 @@ struct OwnedSlice {
 
 /// A struct that basically replaces a Box<str>, but with a defined layout,
 /// suitable for FFI.
-struct OwnedStr {
-  OwnedSlice<uint8_t> _0;
-};
+using OwnedStr = OwnedSlice<uint8_t>;
 
 template<typename T>
 struct Option {
