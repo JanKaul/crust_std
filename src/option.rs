@@ -4,9 +4,9 @@ use std::{
     pin::Pin,
 };
 
-use serde::{Deserialize, Serialize};
+use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
-#[derive(Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Eq)]
 #[repr(C, u8)]
 pub enum Option<T> {
     None,
@@ -1123,5 +1123,24 @@ where
             (Option::Some(to), Option::Some(from)) => to.clone_from(from),
             (to, from) => *to = from.clone(),
         }
+    }
+}
+
+impl<T: Serialize> Serialize for Option<T> {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        self.as_ref().serialize(serializer)
+    }
+}
+
+impl<'de, T: Deserialize<'de>> Deserialize<'de> for Option<T> {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let r = std::option::Option::deserialize(deserializer)?;
+        Ok(r.into())
     }
 }
